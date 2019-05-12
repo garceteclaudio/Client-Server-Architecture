@@ -30,10 +30,10 @@ public class Server {
 			//System.out.println("Client socket accepted, creating session...");
 
 			DataInputStream flujo = new DataInputStream(clientSocket.getInputStream());
-			//megToServer = flujo.readUTF();
-
+			
 			Thread thread = new ClientHandler(clientSocket, flujo);
 			thread.start();
+			
 		}//fin while
 
 	}

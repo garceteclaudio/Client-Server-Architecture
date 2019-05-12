@@ -1,4 +1,4 @@
-package ar.com.cgarcete.console;
+package ar.com.cgarcete.frame;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
