@@ -28,6 +28,6 @@ public class MainClient {
 		}while (playAgain);
 
 
-	}
+	}// FIN main()
 
 }//FIN CLASE

@@ -13,9 +13,13 @@ public class ServerConnection{
 	private static final int PORT = 50000;
 	private static final int NUM_BYTES = 2;
 
+	
+	
 	private Socket socket = null;
-	private InputStream in = null;
-	private OutputStream out = null;
+			//InputStream is used for reading,
+	private InputStream inputStream = null;
+			// OutputStream for writing. 
+	private OutputStream outputStream = null;
 	
 	/**
 	 * Constructor for the ServerConnection. Creates a new socket and connects
@@ -33,18 +37,14 @@ public class ServerConnection{
 
 		socket.setSoTimeout(10000);
 		socket.connect(sockaddr);
-		in = socket.getInputStream();
-		out = socket.getOutputStream();
+		inputStream = socket.getInputStream();
+		outputStream = socket.getOutputStream();
 	}
 
 	public void sendMessageToServer(String message) throws Exception {
 		DataOutputStream flujo = new DataOutputStream(this.socket.getOutputStream());
 		flujo.writeUTF(message);
 	}
-	
-	
-	
-	
 	
 	/**
 	 * Sends a message to the server.
@@ -55,7 +55,7 @@ public class ServerConnection{
 	 *             If an error occurs while writing on the output stream.
 	 */
 	public void sendPacket(byte[] messages) throws Exception {
-		out.write(messages);
+		outputStream.write(messages);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class ServerConnection{
 		int receivedBytes = 0;
 		try {
 			while (receivedBytes < NUM_BYTES)
-				receivedBytes = in.read(receivedMessages);
+				receivedBytes = inputStream.read(receivedMessages);
 		} catch (Exception ste) {
 			if (socket != null)
 				socket.close();
