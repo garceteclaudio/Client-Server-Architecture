@@ -1,6 +1,8 @@
 package server;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
@@ -9,7 +11,6 @@ import java.net.Socket;
 
 /**
  * This class implements java Socket server
- * @author pankaj
  *
  */
 public class SocketServerExample {
@@ -24,7 +25,7 @@ public class SocketServerExample {
         server = new ServerSocket(port);
         
         
-        ObjectInputStream ois = null;
+        DataInputStream ois = null;
         ObjectOutputStream oos = null;
         Socket socket= null;
         
@@ -36,16 +37,24 @@ public class SocketServerExample {
             
             //read from socket to ObjectInputStream object
             //De Cliente a servidor
-            ois = new ObjectInputStream(socket.getInputStream());
+            ois = new DataInputStream(socket.getInputStream());
             //convert ObjectInputStream object to String
-            String message = (String) ois.readObject();
+            String message = ois.readUTF();
             System.out.println("Message Received from the client: " + message);
            
-            //create ObjectOutputStream object
-            //De servidor a cliente
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            //write object to Socket
-            oos.writeObject("Hi Client "+message);
+            
+            
+            
+            
+            
+            
+            
+            
+//            //create ObjectOutputStream object
+//            //De servidor a cliente
+//            oos = new ObjectOutputStream(socket.getOutputStream());
+//            //write object to Socket
+//            oos.writeObject("Hi Client "+message);
            
             //terminate the server if client sends exit request
             if(message.equalsIgnoreCase("exit")) {

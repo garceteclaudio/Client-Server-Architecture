@@ -35,14 +35,11 @@ public class SocketClientExample {
         while(estadoWhile==true) {
         	socket = new Socket(host.getHostName(), 9876);
             System.out.println("Escribe algo para enviar al servidor: ");
-            
             //input
             String sentence = keyboard.nextLine();
-            
             if(sentence.contentEquals("exit")) {
             	estadoWhile=false;
             }
-            
             //write to socket using ObjectOutputStream
             oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(sentence);
@@ -62,28 +59,6 @@ public class SocketClientExample {
         //close resources
         ois.close();
         oos.close();
-//        Thread.sleep(100);
-        
-//        for(int i=0; i<5;i++){
-//            //establish socket connection to server
-//            socket = new Socket(host.getHostName(), 9876);
-//            
-//            //write to socket using ObjectOutputStream
-//            oos = new ObjectOutputStream(socket.getOutputStream());
-//            System.out.println("Sending request to Socket Server");
-//            if(i==4)oos.writeObject("exit");
-//            else oos.writeObject(""+i);
-//            
-//            //read the server response message
-//            ois = new ObjectInputStream(socket.getInputStream());
-//            String message = (String) ois.readObject();
-//            System.out.println("Message: " + message);
-//            
-//            //close resources
-//            ois.close();
-//            oos.close();
-//            Thread.sleep(100);
-//        }
         
         
         
