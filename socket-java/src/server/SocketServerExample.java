@@ -1,6 +1,7 @@
 package server;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -26,7 +27,8 @@ public class SocketServerExample {
         
         
         DataInputStream ois = null;
-        ObjectOutputStream oos = null;
+        DataOutputStream oos = null;
+        //ObjectOutputStream
         Socket socket= null;
         
         //keep listens indefinitely until receives 'exit' call or program terminates
@@ -41,20 +43,12 @@ public class SocketServerExample {
             //convert ObjectInputStream object to String
             String message = ois.readUTF();
             System.out.println("Message Received from the client: " + message);
-           
+                   
             
-            
-            
-            
-            
-            
-            
-            
-//            //create ObjectOutputStream object
-//            //De servidor a cliente
-//            oos = new ObjectOutputStream(socket.getOutputStream());
-//            //write object to Socket
-//            oos.writeObject("Hi Client "+message);
+            //create ObjectOutputStream object
+            //De servidor a cliente
+            oos = new DataOutputStream(socket.getOutputStream());
+            oos.writeUTF("Sv msg: "+ message);
            
             //terminate the server if client sends exit request
             if(message.equalsIgnoreCase("exit")) {
@@ -68,7 +62,6 @@ public class SocketServerExample {
         socket.close();
         
         System.out.println("Shutting down Socket server!!");
-        //close the ServerSocket object
         server.close();
     }
     

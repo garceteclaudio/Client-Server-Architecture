@@ -3,6 +3,7 @@ package client;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -20,28 +21,43 @@ public class ClientForm extends JFrame{
 	private JButton sendButton;
 	private JLabel label ;	
 	private JTextField textfield;
+	private JTextArea textArea;
 	
 	public ClientForm() {
 		
+		textArea = new JTextArea();
+		textArea.setEditable(false);
+		textArea.setBounds(0, 0, 400, 200);
+		add(textArea);
+		
+		JScrollPane scroll = new JScrollPane(textArea);
+	    scroll.setBounds(0, 0, 400, 200);
+	    add(scroll);
+	    
+		
 		label = new JLabel();
-		label.setText("Insert message:");
-		label.setBounds(100, 50, 150, 50);
+		label.setText("Message:");
+		label.setBounds(140, 180, 70, 60);
 		add(label);
 		
 		textfield = new JTextField();
-		textfield.setBounds(50, 100, 200, 50);
+		textfield.setBounds(100, 230, 150, 50);
 		add(textfield);
-		
-		
+
 		sendButton = new JButton();
-		sendButton.setText("Send");
-		sendButton.setBounds(100, 180, 100, 50);
+		sendButton.setText("Send to server");
+		sendButton.setBounds(110, 290, 130, 30);
 		add(sendButton);
 		
-		setLayout(null);
-		setSize(400,300);
-		setVisible(true);
 
+		
+		
+		setLayout(null);
+		setSize(400,400);
+		setVisible(true);
+		setLocationRelativeTo ( null );
+		setResizable(false);
+		
 				//action listener
 		sendButton.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent e){
@@ -50,17 +66,22 @@ public class ClientForm extends JFrame{
 //		UserJFrame userJFrame = new UserJFrame();
 //		userJFrame.setVisible(true);  
 			
-			System.out.println(textfield.getText());
+
 			
 			Client myClientConnection = null;
+
 			try {
-				myClientConnection = new Client("192.168.1.6");
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-			try {
+				myClientConnection = new Client("127.0.0.1");
 				myClientConnection.sendMessageToServer(textfield.getText());
-//				System.out.println(myClientConnection.sendMessageToClient());
+				String mensaje = myClientConnection.sendMessageToClient();
+				textArea.append(mensaje+"\n");
+				
+				
+//				textArea.append(textfield.getText()+"\n");
+				
+				
+				
+				
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
