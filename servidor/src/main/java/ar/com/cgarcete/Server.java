@@ -1,9 +1,12 @@
 package ar.com.cgarcete;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class Server { 
 	private final int PORT = 50000;
@@ -23,19 +26,38 @@ public class Server {
 		System.out.println("IP address: "+ InetAddress.getLocalHost().getHostAddress());
 		System.out.println("Listening on port number "+ servSocket.getLocalPort());
 		boolean entrarServerWhile = true;
-
+		
 		while (entrarServerWhile) {
-			//System.out.println("Waiting for client...");
+			System.out.println("Waiting for client...");
 			Socket clientSocket = servSocket.accept();
-			//System.out.println("Client socket accepted, creating session...");
+			
+		
+			System.out.println("Client socket accepted, creating session...");
 
 			DataInputStream flujo = new DataInputStream(clientSocket.getInputStream());
+			DataOutputStream flujoServer = new DataOutputStream(clientSocket.getOutputStream());
 			
-			Thread thread = new ClientHandler(clientSocket, flujo);
+		
+			Thread thread = new ClientHandler(clientSocket, flujo,flujoServer);
 			thread.start();
+			
+
+			
+	        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+	        for ( Thread t : threadSet){
+	            System.out.println("Thread :"+t+":"+" state : "+t.getState()+ " Thread ID : "+t.getId());
+	        }
 			
 		}//fin while
 
 	}
 
+	public static void main(String[] args) throws Exception {
+
+		Server myServer = new Server();
+		System.out.println("Starting server...");
+		myServer.start();
+	}
 }//FIN Server class
+
+

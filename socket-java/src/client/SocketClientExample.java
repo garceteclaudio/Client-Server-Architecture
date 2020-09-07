@@ -1,5 +1,7 @@
 package client;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,35 +23,32 @@ public class SocketClientExample {
         //get the localhost IP address, if server is running on some other IP, you need to use that
         InetAddress host = InetAddress.getLocalHost();
         Socket socket = null;
-        ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
+        DataInputStream ois = null;
+        DataOutputStream oos = null;
         
         boolean estadoWhile = true;
     	Scanner keyboard = null;
     	
-    	
-        //establish socket connection to server
-    	keyboard = new Scanner(System.in);
-      
-        
         while(estadoWhile==true) {
-        	socket = new Socket(host.getHostName(), 9876);
+            //establish socket connection to server
+        	keyboard = new Scanner(System.in);
+        	socket = new Socket(host, 9876);
             System.out.println("Escribe algo para enviar al servidor: ");
             //input
             String sentence = keyboard.nextLine();
+            
             if(sentence.contentEquals("exit")) {
             	estadoWhile=false;
             }
+            
             //write to socket using ObjectOutputStream
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(sentence);
+            oos = new DataOutputStream(socket.getOutputStream());
+            oos.writeUTF(sentence);
             
-
-            
-            //read the server response message
-            ois = new ObjectInputStream(socket.getInputStream());
-            String message = (String) ois.readObject();
-            System.out.println("Server message: " + message);
+            //read the server response message and syso on console
+            ois = new DataInputStream(socket.getInputStream());
+            String message = ois.readUTF();
+            System.out.println("Respuesta del servidor: " + message);
             
 
         	

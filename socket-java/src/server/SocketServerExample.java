@@ -25,7 +25,6 @@ public class SocketServerExample {
         //create the socket server object
         server = new ServerSocket(port);
         
-        
         DataInputStream ois = null;
         DataOutputStream oos = null;
         //ObjectOutputStream
@@ -36,6 +35,8 @@ public class SocketServerExample {
             System.out.println("Waiting for the client request:");
             //creating socket and waiting for client connection
             socket = server.accept();
+            System.out.println("Socket conectado, Local Address: "+socket.getLocalAddress());
+
             
             //read from socket to ObjectInputStream object
             //De Cliente a servidor

@@ -1,5 +1,6 @@
 package ar.com.cgarcete;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +46,17 @@ public class ServerConnection{
 		DataOutputStream flujo = new DataOutputStream(this.socket.getOutputStream());
 		flujo.writeUTF(message);
 	}
+	
+	
+	public String sendMessageToClient( ) throws Exception {
+		DataInputStream flujo = new DataInputStream(this.socket.getInputStream());
+		return flujo.readUTF();
+	}
+	
+	
+	
+
+	
 	
 	/**
 	 * Sends a message to the server.
