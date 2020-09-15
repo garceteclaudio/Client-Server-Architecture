@@ -1,63 +1,136 @@
 package ar.com.cgarcete;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Scanner;
 
-public class Server { 
-	private final int PORT = 50000;
-
-	/**
-	 * Starts the server, which listens on port 50,000.
-	 * @throws Exception 
-	 */
-	@SuppressWarnings({ "resource" })
-	// Can't close ServerSocket because of infinite loop.
-	public void start() throws Exception {
-
-		
-		System.out.println("MULTI THREADED SERVER.");
-		System.out.println("Creating server socket.");
-		ServerSocket servSocket = new ServerSocket(PORT);
-		System.out.println("IP address: "+ InetAddress.getLocalHost().getHostAddress());
-		System.out.println("Listening on port number "+ servSocket.getLocalPort());
-		boolean entrarServerWhile = true;
-		
-		while (entrarServerWhile) {
-			System.out.println("Waiting for client...");
-			Socket clientSocket = servSocket.accept();
+public class Server implements Runnable{
+	
+	private ServerSocket server = null;
+	private Thread thread = null;
+	private ArrayList<ClientHandler> threads = null;
+	
+	public Server(int portNumber){
+	
+		try{
+			System.out.println("----------------- SERVER -----------------");
 			
-		
-			System.out.println("Client socket accepted, creating session...");
-
-			DataInputStream flujo = new DataInputStream(clientSocket.getInputStream());
-			DataOutputStream flujoServer = new DataOutputStream(clientSocket.getOutputStream());
+			System.out.println("Creating server on port " + portNumber + ", please wait...");
+			server = new ServerSocket(portNumber);
+			server.setReuseAddress(true);
+			System.out.println("Server created: " + server);
 			
-		
-			Thread thread = new ClientHandler(clientSocket, flujo,flujoServer);
-			thread.start();
+			System.out.println("------------------------------------------\n");
 			
-
+			threads = new ArrayList<ClientHandler>();
 			
-	        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-	        for ( Thread t : threadSet){
-	            System.out.println("Thread :"+t+":"+" state : "+t.getState()+ " Thread ID : "+t.getId());
-	        }
+			start();
 			
-		}//fin while
-
+		}catch(IOException e){
+			System.out.println(e);
+		}
+	}
+	
+	public void start(){
+		if(thread == null)
+			thread = new Thread(this); thread.start();
+	}
+	
+	public void stop(){
+		if(thread != null)
+			thread.interrupt(); thread = null;
 	}
 
-	public static void main(String[] args) throws Exception {
-
-		Server myServer = new Server();
-		System.out.println("Starting server...");
-		myServer.start();
+	public void run() {
+		while(thread != null){
+			try{
+				System.out.println("----------------- CLIENT -----------------");
+				System.out.println("Accepting new client...");
+				addThread(server.accept());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
-}//FIN Server class
+	
+	public void addThread(Socket socket){
+		System.out.println("Connected to client " + socket + "!");
+		System.out.println("------------------------------------------\n");
+		
+		threads.add(new ClientHandler(this, socket));
+		startThread();
+	}
+	
+	public void startThread(){
+		try{
+			int newThread = threads.size() - 1;
+			threads.get(newThread).open();
+			threads.get(newThread).start();
+		}catch(IOException ioe){
+			System.out.println("Could not start thread: " + ioe);
+		}
+	}
+	
+	public int findThread(int id){
+		
+		int pos = -1;
+		
+		for(ClientHandler st : threads){
+			if(st.getID() == id){
+				pos = threads.indexOf(st);
+			}
+		}
+		
+		return pos;
+	}
+	
+	public void removeThread(int id){
+		
+		int removePos = findThread(id);
+		
+		if(removePos != -1){
+			ClientHandler removeThread = threads.get(removePos);
+			threads.remove(removePos);
+			
+			try{
+				System.out.println("Removing client: " + id);
+				removeThread.close();
+			}catch(IOException ioe){
+				System.out.println("Could not close thread: " + ioe);
+			}
+		}		
+	}
+	
+	
+	public synchronized void handle(int id, String input){
+		for(ClientHandler c : threads)
+			if(c.getID() != id)
+				c.send(id + ": " + input);
+		
+		if(input.equalsIgnoreCase("bye")){
+			threads.get((findThread(id))).send(".bye");
+			removeThread(id);
+		}			 
+	}
+	
+	public static void main(String [] args){
+		Scanner input = new Scanner(System.in);
+		System.out.println("Enter the port on which the server will run:");
+		int port = input.nextInt();
+		
+		try {
+			//PRINTS OUT HOST IP FOR OTHER CHATTERS
+			System.out.println("Your IP Address is: " + InetAddress.getLocalHost() + "\n");
+		} catch (UnknownHostException e) {
+			System.out.println(e);
+		}
+		
+		Server server = new Server(port);
+		input.close();
+	}
+
+	
+}
 
 

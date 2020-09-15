@@ -11,7 +11,7 @@ import java.net.SocketAddress;
 
 public class ServerConnection{
 	
-	private static final int PORT = 50000;
+	private static final int PORT = 8080;
 	private static final int NUM_BYTES = 2;
 
 	
